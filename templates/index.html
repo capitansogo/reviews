@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Отзывы</title>
+    <!-- Подключение Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4">Какой-то текст названия</h4>
+                    <form method="post" action="{% url 'place' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="inputAddress" class="form-label">Адрес (улица, строение)</label>
+                            <input type="text" class="form-control" id="inputAddress" name="inputAddress"
+                                   placeholder="Введите адрес" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="inputPlaceName" class="form-label">Название заведения</label>
+                            <input type="text" class="form-control" id="inputPlaceName" name="inputPlaceName"
+                                   placeholder="Введите название" required>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Отправить</button>
+                        </div>
+                        
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="container-fliud">
+
+        <div class="ocean">
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+    </div>
+</div>
+<!-- Подключение Bootstrap 5 JS (необходимо для работы некоторых компонентов) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // при нажатии на кнопку "Отправить" появляется анимация загрузки
+    $(document).ready(function () {
+        $('form').submit(function () {
+            // сначала скрываем кнопку отправки
+            $('button[type="submit"]').hide();
+            // показываем анимацию загрузки
+            $('.loader').show();
+            
+        });
+    });
+    
+    
+</script>
+
+</body>
+</html>
