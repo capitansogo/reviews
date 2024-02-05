@@ -27,4 +27,22 @@ def place(request):
             cache.set(cache_summarization_key, summarization, timeout=60 * 60 * 24)
             cache.set(cache_rewiews_key, reviews, timeout=60 * 60 * 24)
 
-        return render(request, 'reviews.html', {'summarization': summarization, 'reviews': reviews})
+        plus_start = summarization.find("Плюсы:")
+        minus_start = summarization.find("Минусы:")
+        replay = summarization.find("Ответ")
+
+        # Извлекаем подстроки для плюсов и минусов
+        pluses = summarization[plus_start:minus_start].strip().split('\n')[1:]
+        minuses = summarization[minus_start:replay].strip().split('\n')[1:]
+
+        for i in range(len(pluses)):
+            pluses[i] = pluses[i].strip('-')
+
+        for i in range(len(minuses)):
+            minuses[i] = minuses[i].strip('-')
+
+        # Выводим результат
+        print("Плюсы:", pluses)
+        print("Минусы:", minuses)
+        return render(request, 'reviews.html',
+                      {'summarization': summarization, 'reviews': reviews, 'pluses': pluses, 'minuses': minuses})
