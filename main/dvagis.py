@@ -1,88 +1,113 @@
-import locale
 from time import sleep
 
 from selenium import webdriver
 from selenium.webdriver import ActionChains
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 from main.test_gpt import gpt_request
-locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
 
 
 def question_generation(adress, name):
-    url = 'https://2gis.ru/yaroslavl'
-    text = f'{name}, {adress}'
-    input_path = '//*[@id="root"]/div/div/div[1]/div[1]/div[2]/div/div/div[1]/div/div/div/div/div[2]/form/div/input'
-    reviews_path = '//*[@id="root"]/div/div/div[1]/div[1]/div[2]/div[2]/div/div/div/div/div[2]/div[2]/div/div[1]/div/div/div/div/div[2]/div[1]/div/div/div[1]/div[3]/div/a'
-    reviews_path_class = '_2lcm958'
+    reviews_global = []
 
-    # Specify the URL of your remote WebDriver
-    # remote_url = 'http://localhost:4444/wd/hub'
+    url = 'https://yandex.ru/maps/16/yaroslavl/'
+    org = f'{name}, {adress}'
+
+    driver = webdriver.Chrome()
+    driver.get(url)
+    driver.implicitly_wait(5)
+    sleep(3)
+
+    driver.find_element(By.CLASS_NAME, 'input__control').send_keys(org)
+    driver.find_element(By.CLASS_NAME, 'input__control').send_keys(Keys.ENTER)
+
+    driver.implicitly_wait(5)
+    sleep(10)
+    driver.find_element(By.CLASS_NAME, 'search-snippet-view').click()
+    driver.implicitly_wait(10)
+
+    url = driver.current_url
+    url = url.split('?')
+    url = url[0] + 'reviews/'
+    driver.get(url)
+
+    driver.implicitly_wait(5)
+    sleep(3)
+
+    reviews_container = driver.find_element(By.CLASS_NAME, 'scroll__container')
+    reviews_all = []
+    scrolls = 5
+    for _ in range(scrolls):
+        print("Scrolling...", _)
+        ActionChains(driver).move_to_element(reviews_container).send_keys(Keys.PAGE_DOWN).perform()
+        reviews = driver.find_elements(By.CLASS_NAME, 'business-review-view__body-text')
+        for review in reviews:
+            reviews_all.append(review.text)
+        sleep(1)
+
+    copy = list(set(reviews_all))
+    for i in range(len(copy)):
+        reviews_global.append(copy[i])
+
+    text = '\n'.join(copy)
+
+    url = 'https://2gis.ru/yaroslavl'
+    org = f'{name}, {adress}'
+    input_path = '//*[@id="root"]/div/div/div[1]/div[1]/div[2]/div/div/div[1]/div/div/div/div/div[2]/form/div/input'
 
     print("start_0")
-    # Create a WebDriver with the specified options
-    options = Options()
-    # options.add_argument('--headless')
-
-
-    driver = webdriver.Chrome(options=options)
     driver.get(url)
     driver.implicitly_wait(5)
     print("start")
-    driver.find_element(By.XPATH, input_path).send_keys(text)
+    driver.find_element(By.XPATH, input_path).send_keys(org)
     driver.find_element(By.XPATH, input_path).send_keys(Keys.ENTER)
     driver.implicitly_wait(5)
-    sleep(3)
-    print("start_2")
-    # driver.find_element(By.XPATH, reviews_path).click()
-
-    # получение адреса страницы
-    url = driver.current_url
-    url = url.split('?m=')
-    print(url[0])
-    print(url[1])
-    url = url[0] + '/tab/reviews/' + url[1]
-
-    driver.get(url)
+    sleep(5)
+    driver.find_element(By.CLASS_NAME, '_zjunba').click()
+    driver.implicitly_wait(10)
     sleep(5)
 
-    print(driver.current_url)
+    # поиск ссылки с текстом "Отзывы"
+    reviews_links = driver.find_elements(By.XPATH, '//*[contains(text(), "Отзывы")]')
+    # переход по ссылке
+    for link in reviews_links:
+        try:
+            link.click()
+            break
+        except:
+            print('не найдено')
 
-    # # поиск всех reviews_path_class и клик по второму
-    # reviews_path_class = driver.find_elements(By.CLASS_NAME, reviews_path_class)
-    # reviews_path_class[1].click()
-    # driver.implicitly_wait(5)
-    # sleep(3)
-
+    driver.implicitly_wait(5)
+    sleep(3)
     print("start scroll")
-    reviews_all = []
     reviews_container = driver.find_element(By.CLASS_NAME, '_guxkefv')
-
-    # получение кода страницы и сохранение в файл
-    print(driver.page_source)
-
-    scrolls = 20
+    reviews_all = []
+    scrolls = 5
     for _ in range(scrolls):
         print("Scrolling...", _)
         ActionChains(driver).move_to_element(reviews_container).send_keys(Keys.PAGE_DOWN).perform()
         reviews = driver.find_elements(By.CLASS_NAME, '_1it5ivp')
+        reviews_long = driver.find_elements(By.CLASS_NAME, '_ayej9u3')
         print(len(reviews))
         for review in reviews:
             reviews_all.append(review.text)
-            print(review.text)
+        for review in reviews_long:
+            reviews_all.append(review.text)
 
         sleep(1)
 
-    print(reviews_all)
     print("end scroll")
-    reviews = list(set(reviews_all))
+    copy = list(set(reviews_all))
+    for i in range(len(copy)):
+        reviews_global.append(copy[i])
 
-    text = '\n'.join(reviews).encode('windows-1251', errors='ignore').decode('windows-1251')
+    text.join('\n'.join(copy))
     print(text)
     driver.close()
-    return gpt_request(text), reviews
+    if len(text) > 5000:
+        text = text[:6000]
+    return gpt_request(text), reviews_global
 
 
-# question_generation('Свободы 55', 'True Gamers')
+# question_generation('Московский проспект 88', 'ЯГТУ')
