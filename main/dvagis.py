@@ -24,8 +24,11 @@ def question_generation(adress, name):
 
     driver.implicitly_wait(5)
     sleep(10)
-    driver.find_element(By.CLASS_NAME, 'search-snippet-view').click()
-    driver.implicitly_wait(10)
+    try:
+        driver.find_element(By.CLASS_NAME, 'search-snippet-view').click()
+        driver.implicitly_wait(10)
+    except:
+        print('одно заведение')
 
     url = driver.current_url
     url = url.split('?')
@@ -110,4 +113,3 @@ def question_generation(adress, name):
     return gpt_request(text), reviews_global
 
 
-# question_generation('Московский проспект 88', 'ЯГТУ')
