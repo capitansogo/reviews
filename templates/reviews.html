@@ -12,22 +12,45 @@
 
 <!-- Контент страницы -->
 <div class="container mt-5">
-    {% for p in pluses %}
-        <div class="alert alert-success" role="alert">
-            {{ p }}
+    {% if pluses %}
+        <h1>Плюсы</h1>
+        {% for p in pluses %}
+            <div class="alert alert-success" role="alert">
+                {{ p }}
+            </div>
+        {% endfor %}
+    {% else %}
+        <h1>Плюсы</h1>
+        <div class="alert alert-warning" role="alert">
+            Плюсов не выявлено
         </div>
-    {% endfor %}
-    {% for m in minuses %}
-        <div class="alert alert-danger" role="alert">
-            {{ m }}
+    {% endif %}
+    {% if minuses %}
+        <h1>Минусы</h1>
+        {% for m in minuses %}
+            <div class="alert alert-danger" role="alert">
+                {{ m }}
+            </div>
+        {% endfor %}
+    {% else %}
+        <h1>Минусы</h1>
+        <div class="alert alert-warning" role="alert">
+            Минусов не выявлено
         </div>
-    {% endfor %}
-    <h1>Отзывы</h1>
-    {% for r in reviews %}
-        <div class="alert alert-primary" role="alert">
-            <p>{{ r }}</p>
+    {% endif %}
+    {% if reviews %}
+        <h1>Отзывы</h1>
+        {% for r in reviews %}
+            <div class="alert alert-primary" role="alert">
+                <p>{{ r }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h1>Отзывы</h1>
+        <div class="alert alert-warning" role="alert">
+            Отзывов нет
         </div>
-    {% endfor %}
+    {% endif %}
 </div>
 </body>
 </html>

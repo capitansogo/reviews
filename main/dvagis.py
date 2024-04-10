@@ -106,7 +106,6 @@ def question_generation(adress, name):
         reviews_global.append(copy[i])
 
     text.join('\n'.join(copy))
-    print(text)
     driver.close()
     if len(text) > 5000:
         text = text[:6000]
