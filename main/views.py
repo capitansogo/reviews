@@ -35,21 +35,22 @@ def place(request):
         pluses = summarization[plus_start:minus_start].strip().split('\n')[1:]
         minuses = summarization[minus_start:replay].strip().split('\n')[1:]
 
+        print(pluses)
+
         for i in range(len(pluses)):
             pluses[i] = pluses[i].strip('-')
-            if pluses[i] != '':
-                if not str(pluses[i])[0].isdigit():
-                    pluses[i] = ''
+            if pluses[i] == '  ':
+                pluses[i] = ''
 
         for i in range(len(minuses)):
             minuses[i] = minuses[i].strip('-')
-            if pluses[i] != '':
-                if not str(minuses[i])[0].isdigit():
-                    minuses[i] = ''
+            if minuses[i] == '  ':
+                minuses[i] = ''
 
         # Если pluses[i] и minuses[i] пустые, то удаляем их со смещением индексов
         pluses = [i for i in pluses if i]
         minuses = [i for i in minuses if i]
+
 
         return render(request, 'reviews.html',
                       {'summarization': summarization, 'reviews': reviews, 'pluses': pluses, 'minuses': minuses})

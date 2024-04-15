@@ -1,13 +1,17 @@
 import time
+
+import g4f
 from g4f.client import Client
+from g4f.Provider import FlowGpt
 
 client = Client()
 
 
 def gpt_request(text):
     time_start = time.time()
-    completion = client.chat.completions.create(
+    completion = g4f.ChatCompletion.create(
         model="gpt-3.5-turbo",
+        provider=g4f.Provider.FlowGpt,
         messages=[{"role": "user",
                    "content": f"Выдели основные плюсы и минусы по отзывам, представленные в тексте, и сформулируй ответ в "
                               f"форме структурированного списка, в нейтральной эмоциональной огласке, в ответе должны быть "
@@ -17,4 +21,4 @@ def gpt_request(text):
     )
     print("Time to responce: ", time.time() - time_start)
 
-    return completion.choices[0].message.content
+    return completion
