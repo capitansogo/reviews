@@ -5,7 +5,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-from main.test_gpt import gpt_request
+from main.test_gpt import summarization_request
 
 
 def question_generation(adress, name):
@@ -109,6 +109,6 @@ def question_generation(adress, name):
     driver.close()
     if len(text) > 5000:
         text = text[:6000]
-    return gpt_request(text), reviews_global
+    return summarization_request(text), reviews_global
 
 
